@@ -1,8 +1,88 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.5.0;
+pragma solidity ^0.8.0;
 
 
 contract CryptoBridge {
+
+    string public name = "CryptoBridge";
+
+    //Stores FundRaising
+    uint public fundRaisingsCount = 0;
+    mapping(uint => string) public fundraisingsList;
+    mapping(string => FundRaising) private fundraisings;
+    mapping(string => mapping(uint=>Donation)) private fundraisingsdonations; //Double mapping to get each donation of any fundraising
+    mapping(string => bool) private fundraisingExist;
+
+    struct FundRaising {
+        uint id;
+        string string_id;
+        string imghash;
+        uint totalAmount;
+        uint amountToRetrieve;
+        uint donorCount;
+        bool isOpen;
+        address payable author;
+    }
+
+    event FundRaisingCreated (
+        uint id,
+        string string_id,
+        string imghash,
+        uint totalAmount,
+        uint amountToRetrieve,
+        uint donorCount,
+        bool isOpen,
+        address author 
+    );
+
+    event FundRaisingModified (
+        FundRaising fundraising
+    );
+    
+    struct FundRaisingDonations {
+        mapping(uint=>Donation) donations;
+    }
+
+    struct Donation {
+        uint amount;
+        uint message;
+    }
+
+    //Creates FundRaising
+    function createFundRaising(string memory _string_id, string memory _imgHash) public {
+        require(bytes(_string_id).length > 0, "Identification should not be empty");
+        require(fundraisingExist[_string_id] == false, "There is already a fund raising with that identification");
+        
+        //Increment fundraisings id
+        fundRaisingsCount++;
+
+        //Add fundraising to contract
+        fundraisingsList[fundRaisingsCount] = _string_id;
+        fundraisings[_string_id] = FundRaising(fundRaisingsCount,_string_id,_imgHash,0,0,0,true,payable(msg.sender));
+        fundraisingExist[_string_id] = true;
+        //Trigger event
+        emit FundRaisingCreated(fundRaisingsCount,_string_id,_imgHash,0,0,0,true,msg.sender);
+    }
+
+    function openFundRaising(string memory _string_id) public {
+        require(bytes(_string_id).length > 0, "Identification should not be empty");
+        require(fundraisings[_string_id].author == msg.sender,"Only creator can open a fundraising");
+        require(!fundraisings[_string_id].isOpen,"Can't open an already open fundraising");
+
+        fundraisings[_string_id].isOpen = true;
+        emit FundRaisingModified(fundraisings[_string_id]);
+    }
+
+    function closeFundRaising(string memory _string_id) public {
+        require(bytes(_string_id).length > 0, "Identification should not be empty");
+        require(fundraisings[_string_id].author == msg.sender,"Only creator can close a fundraising");
+        require(fundraisings[_string_id].isOpen,"Can't close an already closed fundraising");
+
+        fundraisings[_string_id].isOpen = false;
+        emit FundRaisingModified(fundraisings[_string_id]);
+    }
+
+    /*
     //STRUCTS
     struct FundRaising {
         address creator;
@@ -71,7 +151,7 @@ contract CryptoBridge {
     }
 
     //Close the fund raising to disable it to receive donations. It can be reopened.
-    function closeDonations(string memory identification) public  {
+    function closeFundRaising(string memory identification) public  {
         require(bytes(identification).length > 0, "Identification should not be empty");
         require(msg.sender == fundraisings[identification].creator, "Only the creator can close a fund raising");
         require(fundraisings[identification].isOpen, "Fund raising already closed");
@@ -114,6 +194,13 @@ contract CryptoBridge {
         return (userFundraisings[msg.sender].fundraisings[fundraiseid], fundraisings[userFundraisings[msg.sender].fundraisings[fundraiseid]].amountToRetrieve);
     }
 
+    //From 1 to the amount of all fund raisings, 
+    //returns the name of the fundraise and the amount of funds to retrieve
+    function getNameOfFundRaise(uint256 fundraiseid) public view returns (string memory) {
+        require(fundraiseid > 0, "Fund raise id should not be empty");
+        return (fundRaisingsList[fundraiseid]);
+    }
+
     //given the name of any fund raising, it returns the amount of donors, 
     //the total amount of tokens donated and if it's open
     function getFundRaising(string memory identification) public view returns (uint256, uint256, bool) {
@@ -148,5 +235,6 @@ contract CryptoBridge {
 
         
     }
+    */
 }
 

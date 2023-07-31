@@ -1,0 +1,28 @@
+body{
+    background-color: #211821;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    margin: 1rem;
+    color: #d9e2d9;
+}
+
+.main{
+    display: flex;
+    justify-items: center;
+    align-items: stretch;
+}
+
+.selectors{
+    display: flex;
+    justify-items: center;
+    align-items: stretch;
+}
+
+
+.main_element{
+    background-color: #312831;
+}
+
+.half{
+    width: 50%;
+    margin: 0 5% 0 0;
+}

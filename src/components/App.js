@@ -48,17 +48,23 @@ class App extends Component {
         networkData.address
       );
       this.setState({ cryptobridge });
-      const imagesCount = await cryptobridge.methods.imageCount().call();
-      this.setState({ imagesCount }); 
+      console.log(cryptobridge);
+      const fundingsCount = await cryptobridge.methods
+        .getAmountOfFundRaisings()
+        .call();
+      this.setState({ fundingsCount }); 
       // Load images
-      for (let i = 1; i <= imagesCount; i++) {
-        const image = await cryptobridge.methods.images(i).call();
+      for (let i = 0; i < fundingsCount; i++) {
+        const funding_name = await cryptobridge.methods
+          .getNameOfFundRaise(i)
+          .call();
+        const funding = await cryptobridge.methods.getFundRaising(funding_name).call();
         this.setState({
-          images: [...this.state.images, image]
-        })
+          fundings: [...this.state.fundings, funding],
+        });
       }
-      // Sort images
-      this.setState({images : this.state.images.sort((a,b)=>a.tipAmount<=b.tipAmount)});
+      // Newest fundraisings at first
+      this.setState({ fundings: this.state.fundings.reverse() });
     } else {
       window.alert('CryptoBridge contract not deployed to detected network.');
     }
@@ -111,7 +117,7 @@ class App extends Component {
     this.state = {
       account: '',
       cryptobridge: null,
-      images: [],
+      fundings: [],
       loading: true,
     };
   }
@@ -125,12 +131,13 @@ class App extends Component {
             <p>Loading...</p>
           </div>
         ) : (
-          <Main
-            images={this.state.images}
-            captureFile={this.captureFile}
-            uploadImage={this.uploadImage}
-            tipImageOwner={this.tipImageOwner}
-          />
+          <><Main/></>
+          // <Main //HACER ESTO
+          //   images={this.state.images}
+          //   captureFile={this.captureFile}
+          //   uploadImage={this.uploadImage}
+          //   tipImageOwner={this.tipImageOwner}
+          // />
         )}
       </div>
     );

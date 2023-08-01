@@ -24,16 +24,16 @@ contract CryptoBridge {
         address payable author;
     }
 
-    event FundRaisingCreated (
-        uint id,
-        string string_id,
-        string imghash,
-        uint totalAmount,
-        uint amountToRetrieve,
-        uint donorCount,
-        bool isOpen,
-        address author 
-    );
+    // event FundRaisingCreated (
+    //     uint id,
+    //     string string_id,
+    //     string imghash,
+    //     uint totalAmount,
+    //     uint amountToRetrieve,
+    //     uint donorCount,
+    //     bool isOpen,
+    //     address author 
+    // );
 
     event FundRaisingModified (
         FundRaising fundraising
@@ -45,7 +45,7 @@ contract CryptoBridge {
 
     struct Donation {
         uint amount;
-        uint message;
+        string message;
     }
 
     //Creates FundRaising
@@ -58,10 +58,11 @@ contract CryptoBridge {
 
         //Add fundraising to contract
         fundraisingsList[fundRaisingsCount] = _string_id;
-        fundraisings[_string_id] = FundRaising(fundRaisingsCount,_string_id,_imgHash,0,0,0,true,payable(msg.sender));
+        FundRaising memory new_fundraising = FundRaising(fundRaisingsCount,_string_id,_imgHash,0,0,0,true,payable(msg.sender));
+        fundraisings[_string_id] = new_fundraising;
         fundraisingExist[_string_id] = true;
         //Trigger event
-        emit FundRaisingCreated(fundRaisingsCount,_string_id,_imgHash,0,0,0,true,msg.sender);
+        emit FundRaisingModified(new_fundraising);
     }
 
     function openFundRaising(string memory _string_id) public {
@@ -80,6 +81,25 @@ contract CryptoBridge {
 
         fundraisings[_string_id].isOpen = false;
         emit FundRaisingModified(fundraisings[_string_id]);
+    }
+
+    function donate(string memory _string_id, string memory _message) public payable {
+        //Donate funds in payable
+        //Update the funding
+        FundRaising memory donation_fr = fundraisings[_string_id];
+        require(donation_fr.isOpen);
+
+        donation_fr.donorCount++;
+        donation_fr.totalAmount += msg.value;
+        donation_fr.amountToRetrieve += msg.value;
+
+        fundraisings[_string_id] = donation_fr;
+
+        //Get donation in donors list
+        fundraisingsdonations[_string_id][donation_fr.donorCount] = Donation(msg.value, _message);
+
+        emit FundRaisingModified(donation_fr);
+        
     }
 
     /*

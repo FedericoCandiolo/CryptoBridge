@@ -43,9 +43,10 @@ contract('CryptoBridge', ([deployer, author, donator]) => {
     it('creates fundraising', async()=>{  
       //Success
       assert.equal(fundRaisingsCount, 1); 
-      const event = result.logs[0].args;
+      const event = result.logs[0].args.fundraising;
+      console.log(event.id);
       
-      assert.equal(event.id.toNumber(), fundRaisingsCount.toNumber(),'id is correct');
+      assert.equal(parseInt(event.id), fundRaisingsCount.toNumber(),'id is correct');
       assert.equal(event.string_id, string_id, 'string id is correct');
       assert.equal(event.imghash,hash,'image hash is correct');
       assert.equal(event.totalAmount, '0','total amount is correct');
@@ -89,6 +90,55 @@ contract('CryptoBridge', ([deployer, author, donator]) => {
       
     
     })
+
+    it('receives donations', async () => {
+      let result_donation;
+      const message = 'Test donation!';
+      const donation_value = web3.utils.toWei('1', 'Ether');
+      const web3_donation_value = new web3.utils.BN(donation_value);
+
+      let oldAuthorBalance;
+      oldAuthorBalance = await web3.eth.getBalance(donator);
+      oldAuthorBalance = new web3.utils.BN(oldAuthorBalance);
+
+      result_donation = await cryptobridge.donate(string_id, message, {
+        from: donator,
+        value: donation_value
+      });
+
+      let newAuthorBalance;
+      newAuthorBalance = await web3.eth.getBalance(donator);
+      newAuthorBalance = new web3.utils.BN(newAuthorBalance);
+
+      assert.equal(   //Gas price may vary. As I'm transfering 1ETH just checking the first values
+        newAuthorBalance.toString().slice(0, 3),
+        oldAuthorBalance
+          .sub(web3_donation_value)
+          .toString()
+          .slice(0, 3),
+        'fundraising closes ok'
+      );
+
+      assert.equal(
+        parseInt(result_donation.logs[0].args.fundraising.donorCount),
+        1,
+        'fundraising closes ok'
+      );
+
+      assert.equal(
+        result_donation.logs[0].args.fundraising.totalAmount,
+        donation_value,
+        'fundraising closes ok'
+      );
+
+      assert.equal(
+        result_donation.logs[0].args.fundraising.amountToRetrieve,
+        donation_value,
+        'fundraising closes ok'
+      );
+    })
+
+    
   })
   // describe('funding', async () => {
   //     let F_ID = 'testing_funding';

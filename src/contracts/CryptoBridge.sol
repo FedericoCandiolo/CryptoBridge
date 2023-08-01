@@ -10,7 +10,7 @@ contract CryptoBridge {
     uint public fundRaisingsCount = 0;
     mapping(uint => string) public fundraisingsList;
     mapping(string => FundRaising) private fundraisings;
-    mapping(string => mapping(uint=>Donation)) private fundraisingsdonations; //Double mapping to get each donation of any fundraising
+    mapping(string => mapping(uint=>Donation)) public fundraisingsdonations; //Double mapping to get each donation of any fundraising
     mapping(string => bool) private fundraisingExist;
 
     struct FundRaising {
@@ -23,17 +23,6 @@ contract CryptoBridge {
         bool isOpen;
         address payable author;
     }
-
-    // event FundRaisingCreated (
-    //     uint id,
-    //     string string_id,
-    //     string imghash,
-    //     uint totalAmount,
-    //     uint amountToRetrieve,
-    //     uint donorCount,
-    //     bool isOpen,
-    //     address author 
-    // );
 
     event FundRaisingModified (
         FundRaising fundraising
@@ -101,6 +90,25 @@ contract CryptoBridge {
         emit FundRaisingModified(donation_fr);
         
     }
+
+    //Given the name of a fundraising (created by the account that queries,
+    //it withdraws the pending tokens stored in the contract. Balances are updated
+    function withdrawFunds(string memory _string_id) public {
+        require(bytes(_string_id).length > 0, "Identification should not be empty");
+        require(msg.sender == fundraisings[_string_id].author, "Only the author can retrieve funds");
+        require(fundraisings[_string_id].amountToRetrieve > 0 ,"There's no funds to retrieve");
+
+        uint256 amount = fundraisings[_string_id].amountToRetrieve;
+
+        address payable owner = payable(msg.sender);
+
+        owner.transfer(amount); 
+        fundraisings[_string_id].amountToRetrieve = 0;
+
+        emit FundRaisingModified(fundraisings[_string_id]);
+    }
+
+    //Getters
 
     /*
     //STRUCTS

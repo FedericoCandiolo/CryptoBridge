@@ -97,22 +97,22 @@ contract('CryptoBridge', ([deployer, author, donator]) => {
       const donation_value = web3.utils.toWei('1', 'Ether');
       const web3_donation_value = new web3.utils.BN(donation_value);
 
-      let oldAuthorBalance;
-      oldAuthorBalance = await web3.eth.getBalance(donator);
-      oldAuthorBalance = new web3.utils.BN(oldAuthorBalance);
+      let oldDonatorBalance;
+      oldDonatorBalance = await web3.eth.getBalance(donator);
+      oldDonatorBalance = new web3.utils.BN(oldDonatorBalance);
 
       result_donation = await cryptobridge.donate(string_id, message, {
         from: donator,
         value: donation_value
       });
 
-      let newAuthorBalance;
-      newAuthorBalance = await web3.eth.getBalance(donator);
-      newAuthorBalance = new web3.utils.BN(newAuthorBalance);
+      let newDonatorBalance;
+      newDonatorBalance = await web3.eth.getBalance(donator);
+      newDonatorBalance = new web3.utils.BN(newDonatorBalance);
 
       assert.equal(   //Gas price may vary. As I'm transfering 1ETH just checking the first values
-        newAuthorBalance.toString().slice(0, 3),
-        oldAuthorBalance
+        newDonatorBalance.toString().slice(0, 3),
+        oldDonatorBalance
           .sub(web3_donation_value)
           .toString()
           .slice(0, 3),
@@ -138,6 +138,40 @@ contract('CryptoBridge', ([deployer, author, donator]) => {
       );
     })
 
+    it('withdraws funds', async () => {
+      let result_withdrawal;
+      const donation_value = web3.utils.toWei('1', 'Ether');
+      const web3_donation_value = new web3.utils.BN(donation_value);
+
+      let oldAuthorBalance;
+      oldAuthorBalance = await web3.eth.getBalance(author);
+      oldAuthorBalance = new web3.utils.BN(oldAuthorBalance);
+
+      result_withdrawal = await cryptobridge.withdrawFunds(string_id, {
+        from: author,
+      });
+
+      let newAuthorBalance;
+      newAuthorBalance = await web3.eth.getBalance(author);
+      newAuthorBalance = new web3.utils.BN(newAuthorBalance);
+
+      assert.equal(
+        //Gas price may vary. As I'm transfering 1ETH just checking the first values
+        newAuthorBalance.toString().slice(0, 3),
+        oldAuthorBalance
+          .add(web3_donation_value)
+          .toString()
+          .slice(0, 3),
+        'fundraising closes ok'
+      );
+
+      assert.equal(
+        parseInt(result_withdrawal.logs[0].args.fundraising.amountToRetrieve),
+        0,
+        'amount to retrieve updates ok'
+      );
+
+    })
     
   })
   // describe('funding', async () => {

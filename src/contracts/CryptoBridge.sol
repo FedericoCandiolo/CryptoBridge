@@ -108,9 +108,9 @@ contract CryptoBridge {
 
     //From 1 to the amount of fund raisings associated to the account, 
     //returns the name of the fundraise and the amount of funds to retrieve
-    function getNameOfMyFundRaise(uint256 fundraiseid) public view returns (string memory, uint256) {
-        require(fundraiseid > 0, "Fund raise id should not be empty");
-        return (userFundraisings[msg.sender].fundraisings[fundraiseid], fundraisings[userFundraisings[msg.sender].fundraisings[fundraiseid]].amountToRetrieve);
+    function getNameOfMyFundRaising(uint256 fundraisingid) public view returns (string memory, uint256) {
+        require(fundraisingid > 0, "Fund raise id should not be empty");
+        return (userFundraisings[msg.sender].fundraisings[fundraisingid], fundraisings[userFundraisings[msg.sender].fundraisings[fundraisingid]].amountToRetrieve);
     }
 
     //given the name of any fund raising, it returns the amount of donors, 

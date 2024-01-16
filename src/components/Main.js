@@ -4,57 +4,49 @@ import FundRaising from './FundRaising'
 const Main = (props) => {
   return (
     <div className="main">
+      <link
+        rel="stylesheet"
+        href="https://use.fontawesome.com/releases/v5.10.2/css/all.css"
+      ></link>
       <div className="selectors half">
-        <div className="myfr main_element half">
-          <h2>My FundRaisings</h2>
-          <input
-            type="text"
-            name="myfr_search"
-            id="myfr_search"
-            onChange={() => {}}
-          />
-          {/* Search SVG */}
-          <FundRaising
-            title={'First One'}
-            imgpath={
-              'https://64.media.tumblr.com/872bc8bcb0dbdd099ff62cd5553cdab3/be972fdf37775eb4-8b/s1280x1920/5abfbadc1842c4cb9c66e976f663a9a4d9891f7b.jpg'
-            }
-            totalAmount={10}
-            amountToRetrieve={5}
-            totalDonors={6}
-            donate={null}
-            withdraw={() => {}}
-          />
-          <FundRaising
-            title={'Snd One'}
-            imgpath={
-              'https://static.wikia.nocookie.net/kuroshitsuji/images/3/32/BoM2_Ciel.png/revision/latest?cb=20200507114750'
-            }
-            totalAmount={10}
-            amountToRetrieve={5}
-            totalDonors={6}
-            donate={null}
-            withdraw={() => {}}
-          />
-        </div>
         <div className="fr main_element half">
-          <h2>FundRaisings</h2>
-          <input
-            type="text"
-            name="myfr_search"
-            id="myfr_search"
-            onChange={() => {}}
-          />
+          <h2 className="fundraisingbar">My fund raisings</h2>
+          <div className="fundraisingbar ">
+            <div className="nomargin">
+              <input
+                className="searchbar"
+                type="text"
+                placeholder="Search fund raising"
+              />
+              <i class="fa fa-search"></i>
+            </div>
+            <button className="togglefr nomargin">
+              View all fund raisings
+            </button>
+          </div>
           {/* Search SVG */}
           <FundRaising
             title={'First One'}
             imgpath={
-              'https://64.media.tumblr.com/872bc8bcb0dbdd099ff62cd5553cdab3/be972fdf37775eb4-8b/s1280x1920/5abfbadc1842c4cb9c66e976f663a9a4d9891f7b.jpg'
+              'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
             }
             totalAmount={10}
             amountToRetrieve={5}
             totalDonors={6}
-            donate={() => {}}
+            isOpen={true}
+            // donate={() => {}}
+            withdraw={null}
+          />
+          <FundRaising
+            title={'First One'}
+            imgpath={
+              'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+            }
+            totalAmount={100}
+            amountToRetrieve={0}
+            totalDonors={9}
+            isOpen={true}
+            // donate={() => {}}
             withdraw={null}
           />
           <FundRaising
@@ -65,7 +57,8 @@ const Main = (props) => {
             totalAmount={10}
             amountToRetrieve={5}
             totalDonors={6}
-            donate={() => {}}
+            isOpen={false}
+            // donate={() => {}}
             withdraw={null}
           />
         </div>

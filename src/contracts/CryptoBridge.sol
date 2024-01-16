@@ -113,12 +113,18 @@ contract CryptoBridge {
         return (userFundraisings[msg.sender].fundraisings[fundraisingid], fundraisings[userFundraisings[msg.sender].fundraisings[fundraisingid]].amountToRetrieve);
     }
 
+    //Return the string identification for a fund raising given an id.
+    function getNameOfFundRaising(uint256 fundraisingid) public view returns (string memory) {
+        require(fundraisingid > 0, "Fund raise id should not be empty");
+        return (fundRaisingsList[fundraisingid]);
+    }
+
     //given the name of any fund raising, it returns the amount of donors, 
     //the total amount of tokens donated and if it's open
-    function getFundRaising(string memory identification) public view returns (uint256, uint256, bool) {
+    function getFundRaising(string memory identification) public view returns (uint256, uint256, bool, string memory) {
         require(bytes(identification).length > 0, "Identification should not be empty");
         FundRaising storage fundraising = fundraisings[identification];
-        return (fundraising.totalAmount,fundraising.donorCount,fundraising.isOpen);
+        return (fundraising.totalAmount,fundraising.donorCount,fundraising.isOpen, fundraising.img);
     }
 
     //Given a fund raising and a number of donor, it returns the amount donated and the message left

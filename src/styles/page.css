@@ -12,6 +12,7 @@ body{
     letter-spacing: 0.05rem;
     color: var(--pink);
     margin: 0;
+    font-size: small;
 }
 
 div{
@@ -21,7 +22,7 @@ div{
 h2 {
     border-bottom: var(--pink) solid 1pt;
     padding-bottom: 0.1rem;
-    padding-top: 2rem !important;
+    padding-top: 0.5rem !important;
 
 }
 
@@ -34,10 +35,6 @@ h2 {
     display: flex;
     justify-items: center;
     align-items: stretch;
-    margin: auto !important;
-}
-
-.main *{
     margin: auto !important;
 }
 
@@ -55,24 +52,52 @@ h2 {
     margin-right: 0.5rem;
 }
 
+.lineheight{
+    line-height: 1.5rem;
+}
+
+/* .filetext {
+    color: transparent !important;
+}
+
+.filetext::after{
+    content:"No image chosen";
+    margin-right: 1rem;
+    color: inherit !important;
+} */
+
 .navbar{
     padding: 1vh;
+    margin-bottom: 1.5rem;
     height: 7vh;
     display: flex;
     justify-content: space-between;
     border-bottom: var(--pink) solid 1pt;
 }
 
-.selectors{
+
+.space-between {
     display: flex;
-    justify-items: center;
-    align-items: stretch;
+    justify-content: space-between;
 }
 
 
 .main_element{
     background-color: var(--black);
 }
+
+.column-container{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+@media (max-width: 900px) {
+    .column-container{
+        flex-flow: column;
+    }
+}
+
 
 .half{
     width: 50vw;
@@ -83,12 +108,22 @@ h2 {
     margin: 0 5% 0 0;
 }
 
+.donation {
+    /* height: 5.5rem; 
+    border: var(--pink) solid 1pt; */
+    margin: 1rem;
+    text-align: center;
+}
+
+
 .fundraising {
-    height: 6rem; 
+    height: 5.5rem; 
     border: var(--pink) solid 1pt;
 }
+
 .fundraisingbar {
-    width: 60vh;
+    width: 27rem;
+    margin: auto;
     display: flex;
     flex-flow: row;
     align-items: center;
@@ -111,6 +146,71 @@ h2 {
     width: 25vh;
 }
 
+.width100 {
+    width: 100%;
+}
+
+.width96_5 {
+    width: 95.5%;
+}
+.width95 {
+    width: 90%;
+    padding-left: 1rem;
+}
+
+.width65 {
+    width: 60%;
+    padding-left: 1rem;
+}
+
+.width45 {
+    width: 45%;
+}
+
+.marginright{
+margin-right: 1rem;
+
+}
+
+.width30 {
+    width: 30%
+}
+
+.textcenter{
+    text-align: center;
+}
+
+.createbutton {
+  background: none;
+  border: var(--pink) solid 1pt;
+  border-radius: 1.5rem;
+  height: 3rem;
+  font-size: large;
+  padding: 0 1rem;
+  color: var(--pink);
+}
+
+.searchbutton {
+  background: none;
+  border: var(--pink) solid 1pt;
+  border-radius: 1rem;
+  height: 1.7rem;
+  font-size: inherit;
+  padding: 0 1rem;
+  color: var(--pink);
+}
+
+
+
+.inputbar {
+    background: none;
+    border: var(--pink) solid 1pt;
+    border-radius: 1rem;
+    margin-bottom: 0.5rem;
+    height: 1.5rem;
+    color: var(--pink);
+}
+
 .togglefr{
     background: none;
     border: var(--pink) solid 1pt;
@@ -127,11 +227,12 @@ h2 {
 }
 
 .fundraising img {
-    height: 10vh;
-    width: 10vh;
+    height: 4rem;
+    width: 4rem;
     object-fit: cover;
-    border-radius: 5vh;
-    margin-right: 1rem !important;
+    border-radius: 2rem;
+    margin-left: 0.5rem !important;
+    margin-right: 0.5rem !important;
 }
 
 .fundraising button {
@@ -164,7 +265,34 @@ h2 {
     letter-spacing: 0.1rem;
 }
 
+.bigtext{
+    font-size: xx-large;
+}
+
+.large {
+    font-size: large;
+}
+
 .grey {
     color: var(--grey) !important;
     border-color: var(--grey) !important;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.filebutton::file-selector-button {
+  display:none;
+}
+
+#loader {
+    display: flex;
+flex-flow: column;
+justify-content: center;
+align-items: center;
+margin: auto !important;
+text-align: center;
+margin-top: 30vh !important;
+
 }

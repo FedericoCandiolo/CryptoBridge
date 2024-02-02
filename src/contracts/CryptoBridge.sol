@@ -55,8 +55,8 @@ contract CryptoBridge {
         fundraisings[identification].img = imgpath;
         fundraisingExist[identification] = true;
 
-        fundRaisingsList[amountoffundraisings] = identification;
         amountoffundraisings++;
+        fundRaisingsList[amountoffundraisings] = identification;
 
         emit FundRaisingCreated(identification);
     }

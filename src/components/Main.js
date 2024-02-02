@@ -1,74 +1,204 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import FundRaising from './FundRaising'
+import Donation from './Donation';
 
 const Main = (props) => {
+  const [fields, setFields] = useState({});
+  const [buffer, setBuffer] = useState(undefined);
+  const [file, setFile] = useState("");
+  const [identification, setIdentification] = useState("");
+
+  const handleChange = e => {
+    setIdentification(e.target.value);
+    e.preventDefault();
+    console.log(e.target.value);
+  }
+
+  const createSubmit = (event) => {
+    event.preventDefault();
+    if (identification && buffer) props.actions.create(identification, buffer);
+  };
+
+  const captureFile = (event) => {
+    //Preprocesa la imagen para upload
+    event.preventDefault();
+    const file = event.target.files[0];
+    setFile(file);
+    const reader = new window.FileReader();
+    reader.readAsArrayBuffer(file);
+    console.log(file)
+
+    reader.onloadend = () => {
+      console.log("READER")
+      console.log(reader.result)
+      setBuffer(Buffer(reader.result));
+      console.log('buffer', buffer);
+      console.log(buffer);
+    };
+  };
+
   return (
     <div className="main">
       <link
         rel="stylesheet"
         href="https://use.fontawesome.com/releases/v5.10.2/css/all.css"
       ></link>
-      <div className="selectors half">
-        <div className="fr main_element half">
-          <h2 className="fundraisingbar">My fund raisings</h2>
-          <div className="fundraisingbar ">
-            <div className="nomargin">
-              <input
-                className="searchbar"
-                type="text"
-                placeholder="Search fund raising"
-              />
-              <i class="fa fa-search"></i>
+      {/* <div className="half"> */}
+      <div className="column-container">
+        <div className="">
+          <div className="frform">
+            <h2 className="fundraisingbar">Create fund raising</h2>
+            <div className="space-between fundraisingbar">
+              <form
+                className="width100"
+                onSubmit={createSubmit}
+              >
+                <input
+                  className="inputbar block width95"
+                  id="identification"
+                  name="identification"
+                  type="text"
+                  placeholder="Identification"
+                  onChange={handleChange}
+                />
+                <div className="space-between width96_5">
+                  <div className="space-between width100">
+                    <input
+                      className="searchbutton nomargin block filebutton lineheight filetext width45 marginright"
+                      id="file"
+                      type="file"
+                      accept=".jpg, .jpeg, .png, .bmp, .gif"
+                      onChange={captureFile}
+                    />
+                    <label
+                      htmlFor="file"
+                      className="searchbutton nomargin block lineheight width30 textcenter"
+                    >
+                      Choose image
+                    </label>
+                  </div>
+                </div>
+              </form>
+              <div>
+                <button
+                onClick={createSubmit}
+                  className="createbutton nomargin block"
+                  // onClick={() => props.actions.create('Test', 'imgpath')}
+                >
+                  Create
+                </button>
+              </div>
             </div>
-            <button className="togglefr nomargin">
-              View all fund raisings
-            </button>
           </div>
-          {/* Search SVG */}
-          <FundRaising
-            title={'First One'}
-            imgpath={
-              'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
-            }
-            totalAmount={10}
-            amountToRetrieve={5}
-            totalDonors={6}
-            isOpen={true}
-            // donate={() => {}}
-            withdraw={null}
-          />
-          <FundRaising
-            title={'First One'}
-            imgpath={
-              'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
-            }
-            totalAmount={100}
-            amountToRetrieve={0}
-            totalDonors={9}
-            isOpen={true}
-            // donate={() => {}}
-            withdraw={null}
-          />
-          <FundRaising
-            title={'Snd One'}
-            imgpath={
-              'https://static.wikia.nocookie.net/kuroshitsuji/images/3/32/BoM2_Ciel.png/revision/latest?cb=20200507114750'
-            }
-            totalAmount={10}
-            amountToRetrieve={5}
-            totalDonors={6}
-            isOpen={false}
-            // donate={() => {}}
-            withdraw={null}
-          />
+          {/* <div className="fr main_element half"> */}
+          <div className="fr main_element ">
+            <h2 className="fundraisingbar">My fund raisings</h2>
+            <div className="fundraisingbar ">
+              <div className="nomargin">
+                <input
+                  className="searchbar"
+                  type="text"
+                  placeholder="Search fund raising"
+                />
+                <i className="fa fa-search"></i>
+              </div>
+              <button className="togglefr nomargin">
+                View all fund raisings
+              </button>
+            </div>
+            {/* Search SVG */}
+            <FundRaising
+              title={'First One'}
+              imgpath={
+                'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+              }
+              totalAmount={10}
+              amountToRetrieve={5}
+              totalDonors={6}
+              isOpen={true}
+              // donate={() => {}}
+              withdraw={null}
+            />
+            <FundRaising
+              title={'First One'}
+              imgpath={
+                'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+              }
+              totalAmount={100}
+              amountToRetrieve={0}
+              totalDonors={9}
+              isOpen={true}
+              // donate={() => {}}
+              withdraw={null}
+            />
+            <FundRaising
+              title={'Snd One'}
+              imgpath={
+                'https://static.wikia.nocookie.net/kuroshitsuji/images/3/32/BoM2_Ciel.png/revision/latest?cb=20200507114750'
+              }
+              totalAmount={10}
+              amountToRetrieve={5}
+              totalDonors={6}
+              isOpen={false}
+              // donate={() => {}}
+              withdraw={null}
+            />
+          </div>
         </div>
-      </div>
-      <div className="details main_element half">
-        <p>Details</p>
-        <p>Details</p>
-        <p>Details</p>
-        <p>Details</p>
-        <p>Details</p>
+        <div className="">
+          <div className="frform">
+            <h2 className="fundraisingbar">Donate to fund raising name</h2>
+            <div className="space-between fundraisingbar">
+              <div className="width100">
+                <div className="space-between width96_5">
+                  <input
+                    className="inputbar block width65"
+                    id="amount"
+                    name="amount"
+                    type="number"
+                    placeholder="Amount to donate"
+                    min={0}
+                  />
+                  {/* Change for options: ETH, gWei and Wei */}
+                  <button className="searchbutton nomargin block ">
+                    Search
+                  </button>
+                </div>
+                <input
+                  className="inputbar block width95"
+                  id="message"
+                  name="message"
+                  type="text"
+                  placeholder="Message"
+                />
+              </div>
+              <div>
+                <button className="createbutton nomargin block">Donate</button>
+              </div>
+            </div>
+          </div>
+          {/* <div className="fr main_element half"> */}
+          <div className="fr main_element ">
+            <h2 className="fundraisingbar">Fund raising's donations</h2>
+            <div className="fundraisingbar ">
+              <div className="nomargin">
+                <input
+                  className="searchbar"
+                  type="text"
+                  placeholder="Search donation message"
+                />
+                <i class="fa fa-search"></i>
+              </div>
+              <button className="togglefr nomargin">
+                View all fund raisings
+              </button>
+            </div>
+            {/* Search SVG */}
+            <Donation msg={'This is my first donation!'} amount={5} />
+            <Donation msg={'This is my second donation!'} amount={2} />
+            <Donation msg={'This is my third donation!'} amount={0.5} />
+          </div>
+        </div>
       </div>
     </div>
   );

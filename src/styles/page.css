@@ -26,6 +26,58 @@ h2 {
 
 }
 
+.selected{
+    color: var(--cyan) !important;
+    border-color: var(--cyan) !important;
+}
+
+.scroll{
+    margin: auto;
+    display: flex;
+    flex-flow: row;
+    justify-content: space-between;
+    overflow-y: scroll;
+    max-height: 49vh;
+    scrollbar-color: inherit;
+    scrollbar-face-color: var(--pink);
+    width: 26rem;
+}
+
+.scrollcontent {
+    width: 25rem;
+}
+
+::-webkit-scrollbar {
+    width: 1rem;
+    margin-block: 5rem;
+}
+
+::-webkit-scrollbar-track{
+    color: var(--black);
+    border: solid 1pt var(--pink);
+    border-radius: 100vw;
+    margin: auto; 
+    margin-left: 1rem;
+    
+}
+
+::-webkit-scrollbar-track {
+  background: var(--black);
+  border: solid 1pt var(--pink);
+  border-radius: 100vw;
+}
+
+::-webkit-scrollbar-thumb {
+    border: solid 2pt var(--pink) ;
+    background: var(--black);
+    border-radius: 100vw;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--pink);
+}
+
+
 .logobackground{
     background-color: var(--black);
     padding: 0;
@@ -122,7 +174,7 @@ h2 {
 }
 
 .fundraisingbar {
-    width: 27rem;
+    width: 24rem;
     margin: auto;
     display: flex;
     flex-flow: row;
@@ -143,7 +195,7 @@ h2 {
     padding: 0 1rem;
     color: var(--pink);
     margin-right: 0.25rem !important;
-    width: 25vh;
+    width: 24vh;
 }
 
 .width100 {

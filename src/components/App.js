@@ -66,7 +66,9 @@ class App extends Component {
                       for (let i = 1; i <= myFundingsCount; i++) {
                         const my_funding_name = await cryptobridge.methods
                           .getNameOfMyFundRaising(i)
-                          .call();
+                          .call({
+                            from: this.state.account,
+                          });
 
                         let my_fund_raising = {
                           amountToRetrieve: my_funding_name[1],
@@ -121,14 +123,14 @@ class App extends Component {
 
 
                         let donations = [];
-                        for (let j = 1; j <= fundingsCount; j++) {
+                        for (let j = 1; j <= fundingdata[1]; j++) {
                           const donationdata = await cryptobridge.methods
                             .getDonor(funding_name, j)
                             .call();
 
                           let donation = {
-                            message: donationdata[0],
-                            amount: donationdata[1],
+                            amount: donationdata[0],
+                            message: donationdata[1],
                           };
 
                           donations = [donation, ...donations];
@@ -175,39 +177,48 @@ class App extends Component {
         ) : (
           <>
             <Navbar account={this.state.account} />
-            <Main actions={{
-              create: async (stringid, imgbuffer) => {
-                //UPLOAD IMG TO IPFS
-                let imgpath = ""; 
-                console.log("IMGBUFFERCREATE")
-                console.log(imgbuffer);
-                let result = await ipfs.add(imgbuffer);
-                console.log(result);
-                imgpath = result[0].hash;
+            <Main
+              fundings= {this.state.fundings}
+              actions={{
+                create: async (stringid, imgbuffer) => {
+                  //UPLOAD IMG TO IPFS
+                  let imgpath = "";
+                  try{ 
+                  console.log("IMGBUFFERCREATE")
+                  console.log(imgbuffer);
+                  throw('Get a valid IPFS node.')
+                  let result = await ipfs.add(imgbuffer);
+                  console.log(result);
+                  imgpath = result[0].hash;
 
-                console.log("IMGPATCH before fr")
-                console.log(imgpath)
-
-                //CREATE FUNDRAISING
-                console.log('A fund raising will be created');
-                // imgpath =
-                //   'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'; ////UNTIL I FIND A FREE ALTERNATIVE FOR INFURA
-                if(stringid && imgpath){
-                  const new_funding = await this.state.cryptobridge.methods
-                  .createFundRaising(stringid, imgpath)
-                  .send({ from: this.state.account })
-                  .on('transactionHash', (hash) => {
-                    console.log(`Transaction Hash: ${hash}`);
-                  })
-                  .on('confirmation', (confirmationNumber, receipt) => {
-                    console.log(`Confirmation Number: ${confirmationNumber}`);
-                    console.log(`Receipt:`, receipt);
-                  });
-                  console.log('Fund raising created');
+                  console.log("IMGPATCH before fr")
+                  console.log(imgpath)
+                  }
+                  catch{
+                    console.log("Couldn't upload the image to IPFS.")
+                  }
+                  //CREATE FUNDRAISING
+                  console.log('A fund raising will be created');
+                  // imgpath =
+                  //   'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'; ////UNTIL I FIND A FREE ALTERNATIVE FOR INFURA
+                  if(stringid /*&& imgpath*/){
+                    const new_funding = await this.state.cryptobridge.methods
+                    .createFundRaising(stringid, imgpath)
+                    .send({ from: this.state.account })
+                    .on('transactionHash', (hash) => {
+                      console.log(`Transaction Hash: ${hash}`);
+                    })
+                    .on('confirmation', (confirmationNumber, receipt) => {
+                      console.log(`Confirmation Number: ${confirmationNumber}`);
+                      console.log(`Receipt:`, receipt);
+                      this.loadBlockchainData();
+                    });
+                    console.log('Fund raising created');
+                  }
+                  else console.log('Please complete the fields to create the fund raising.')
                 }
-                else console.log('Please complete the fields to create the fund raising.')
-              }
-            }}/>
+              }}
+            />
           </>
           // <Main //HACER ESTO
           //   images={this.state.images}

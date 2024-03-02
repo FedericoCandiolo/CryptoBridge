@@ -7,12 +7,27 @@ const Main = (props) => {
   const [buffer, setBuffer] = useState(undefined);
   const [file, setFile] = useState("");
   const [identification, setIdentification] = useState("");
+  const [filter, setFilter] = useState("");
+  const [showAllFundings, setShowAllFundings] = useState(true);
+  const [filteredFundRaisings, setFilteredFundRaisings] = useState(
+    props.fundings
+  )
+  const [selectedFundraising, setSelectedFundraising] = useState(undefined);
+  const [fundraisingDonations, setFundraisingDonations] = useState([]);
+  ;
 
   const handleChange = e => {
     setIdentification(e.target.value);
     e.preventDefault();
     console.log(e.target.value);
   }
+
+  const handleFilter = (e) => {
+    e.preventDefault();
+    setFilter(e.target.value);
+    console.log(filter);
+    setFilteredFundRaisings(props.fundings.filter(el=>el.identification.match(filter)));
+  };
 
   const createSubmit = (event) => {
     event.preventDefault();
@@ -49,10 +64,7 @@ const Main = (props) => {
           <div className="frform">
             <h2 className="fundraisingbar">Create fund raising</h2>
             <div className="space-between fundraisingbar">
-              <form
-                className="width100"
-                onSubmit={createSubmit}
-              >
+              <form className="width100" onSubmit={createSubmit}>
                 <input
                   className="inputbar block width95"
                   id="identification"
@@ -81,7 +93,7 @@ const Main = (props) => {
               </form>
               <div>
                 <button
-                onClick={createSubmit}
+                  onClick={createSubmit}
                   className="createbutton nomargin block"
                   // onClick={() => props.actions.create('Test', 'imgpath')}
                 >
@@ -92,234 +104,147 @@ const Main = (props) => {
           </div>
           {/* <div className="fr main_element half"> */}
           <div className="fr main_element ">
-            <h2 className="fundraisingbar">My fund raisings</h2>
+            <h2 className="fundraisingbar">
+              {showAllFundings ? 'Fund raisings' : 'My fund raisings'}
+            </h2>
             <div className="fundraisingbar ">
               <div className="nomargin">
                 <input
                   className="searchbar"
+                  id="filter"
+                  name="filter"
                   type="text"
                   placeholder="Search fund raising"
+                  onChange={handleFilter}
                 />
                 <i className="fa fa-search"></i>
               </div>
-              <button className="togglefr nomargin">
-                View all fund raisings
+              <button
+                className="togglefr nomargin"
+                onClick={() => setShowAllFundings(!showAllFundings)}
+              >
+                View {showAllFundings ? 'my' : 'all'} fund raisings
               </button>
             </div>
             {/* Search SVG */}
-            <FundRaising
-              title={'First One'}
-              imgpath={
-                'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
-              }
-              totalAmount={10}
-              amountToRetrieve={5}
-              totalDonors={6}
-              isOpen={true}
-              // donate={() => {}}
-              withdraw={null}
-            />
-            <FundRaising
-              title={'First One'}
-              imgpath={
-                'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
-              }
-              totalAmount={100}
-              amountToRetrieve={0}
-              totalDonors={9}
-              isOpen={true}
-              // donate={() => {}}
-              withdraw={null}
-            />
-            <FundRaising
-              title={'Snd One'}
-              imgpath={
-                'https://static.wikia.nocookie.net/kuroshitsuji/images/3/32/BoM2_Ciel.png/revision/latest?cb=20200507114750'
-              }
-              totalAmount={10}
-              amountToRetrieve={5}
-              totalDonors={6}
-              isOpen={false}
-              // donate={() => {}}
-              withdraw={null}
-            />
+            <div className="scroll">
+              <div className="scrollcontent">
+                {showAllFundings
+                  ? filteredFundRaisings.map((
+                      p //only show my fundraisings
+                    ) => (
+                      <FundRaising
+                        title={p.identification}
+                        imgpath={
+                          './imgs/default_donation.jpg'
+                          //'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+                        }
+                        totalAmount={p.totalAmount.toNumber()}
+                        totalDonors={p.donorCount.toNumber()}
+                        isOpen={p.isOpen}
+                        isMine={p.isMine}
+                        isSelected={p.identification === selectedFundraising}
+                        withdraw={null}
+                        selectFundraising={() => {
+                          setSelectedFundraising(p.identification);
+                          setFundraisingDonations(p.donations);
+                        }}
+                      />
+                    ))
+                  : filteredFundRaisings
+                      .filter((e) => e.isMine)
+                      .map((
+                        p //only show my fundraisings
+                      ) => (
+                        <FundRaising
+                          title={p.identification}
+                          imgpath={
+                            './imgs/default_donation.jpg'
+                            //'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+                          }
+                          totalAmount={p.totalAmount.toNumber()}
+                          amountToRetrieve={p.amountToRetrieve.toNumber()}
+                          totalDonors={p.donorCount.toNumber()}
+                          isOpen={p.isOpen}
+                          isMine={p.isMine}
+                          // donate={() => {}}
+                          withdraw={null}
+                        />
+                      ))}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="">
-          <div className="frform">
-            <h2 className="fundraisingbar">Donate to fund raising name</h2>
-            <div className="space-between fundraisingbar">
-              <div className="width100">
-                <div className="space-between width96_5">
+        {selectedFundraising ? (
+          <div className="">
+            <div className="frform">
+              <h2 className="fundraisingbar">
+                Donate to "{selectedFundraising}"
+              </h2>
+              <div className="space-between fundraisingbar">
+                <div className="width100">
+                  <div className="space-between width96_5">
+                    <input
+                      className="inputbar block width65"
+                      id="amount"
+                      name="amount"
+                      type="number"
+                      placeholder="Amount to donate"
+                      min={0}
+                    />
+                    {/* Change for options: ETH, gWei and Wei */}
+                    <button className="searchbutton nomargin block ">
+                      Search
+                    </button>
+                  </div>
                   <input
-                    className="inputbar block width65"
-                    id="amount"
-                    name="amount"
-                    type="number"
-                    placeholder="Amount to donate"
-                    min={0}
+                    className="inputbar block width95"
+                    id="message"
+                    name="message"
+                    type="text"
+                    placeholder="Message"
                   />
-                  {/* Change for options: ETH, gWei and Wei */}
-                  <button className="searchbutton nomargin block ">
-                    Search
+                </div>
+                <div>
+                  <button className="createbutton nomargin block">
+                    Donate
                   </button>
                 </div>
-                <input
-                  className="inputbar block width95"
-                  id="message"
-                  name="message"
-                  type="text"
-                  placeholder="Message"
-                />
-              </div>
-              <div>
-                <button className="createbutton nomargin block">Donate</button>
               </div>
             </div>
-          </div>
-          {/* <div className="fr main_element half"> */}
-          <div className="fr main_element ">
-            <h2 className="fundraisingbar">Fund raising's donations</h2>
-            <div className="fundraisingbar ">
-              <div className="nomargin">
-                <input
-                  className="searchbar"
-                  type="text"
-                  placeholder="Search donation message"
-                />
-                <i class="fa fa-search"></i>
+            {/* <div className="fr main_element half"> */}
+            <div className="fr main_element ">
+              <h2 className="fundraisingbar">
+                {selectedFundraising}'s donations
+              </h2>
+              <div className="fundraisingbar ">
+                <div className="nomargin">
+                  <input
+                    className="searchbar"
+                    type="text"
+                    placeholder="Search donation message"
+                  />
+                  <i class="fa fa-search"></i>
+                </div>
+                <button className="togglefr nomargin">
+                  View all fund raisings
+                </button>
               </div>
-              <button className="togglefr nomargin">
-                View all fund raisings
-              </button>
+              {/* Search SVG */}
+              {fundraisingDonations.map((d) => (
+                <Donation msg={d.message} amount={d.amount.toNumber()} />
+              ))}
+              {/* <Donation msg={'This is my first donation!'} amount={5} />
+              <Donation msg={'This is my second donation!'} amount={2} />
+              <Donation msg={'This is my third donation!'} amount={0.5} /> */}
             </div>
-            {/* Search SVG */}
-            <Donation msg={'This is my first donation!'} amount={5} />
-            <Donation msg={'This is my second donation!'} amount={2} />
-            <Donation msg={'This is my third donation!'} amount={0.5} />
           </div>
-        </div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
 }
 
 export default Main;
-// import Identicon from 'identicon.js';
-
-// class Main extends Component {
-
-//   render() { //capturamos la imagen y la preprocesamos, la cargamos en ipfs. Cargamos en blockchain el hash
-//     return (
-//       <div className="container-fluid mt-5">
-//         <div className="row">
-//           <main
-//             role="main"
-//             className="col-lg-12 ml-auto mr-auto"
-//             style={{ maxWidth: '500px' }}
-//           >
-//             <div className="content mr-auto ml-auto">
-//               <p>&nbsp;</p>
-
-//               <h2>Share Image</h2>
-
-//               <form
-//                 onSubmit={(event) => {
-//                   event.preventDefault();
-//                   const description = this.imageDescription.value;
-//                   this.props.uploadImage(description);
-//                 }}
-//               >
-//                 <input
-//                   type="file"
-//                   accept=".jpg, .jpeg, .png, .bmp, .gif"
-//                   onChange={this.props.captureFile}
-//                 />
-//                 <div className="form-group mr-sm-2">
-//                   <br></br>
-//                   <input
-//                     id="imageDescription"
-//                     type="text"
-//                     ref={(input) => {
-//                       this.imageDescription = input;
-//                     }}
-//                     className="form-control"
-//                     placeholder="Image description..."
-//                     required
-//                   />
-//                 </div>
-//                 <button
-//                   type="submit"
-//                   className="btn btn-primary btn-block btn-lg"
-//                 >
-//                   Upload!
-//                 </button>
-//               </form>
-
-//               <p>&nbsp;</p>
-
-//               {this.props.images.map((image, key) => {
-//                 return (
-//                   <div className="card mb-4" key={key}>
-//                     <div className="card-header">
-//                       <img
-//                         className="mr-2"
-//                         width="30"
-//                         height="30"
-//                         src={`data:image/png;base64,${new Identicon(
-//                           image.author,
-//                           30
-//                         ).toString()}`}
-//                       />
-//                       <small className="text-muted">{image.author}</small>
-//                     </div>
-//                     <ul id="imageList" className="list-group list-group-flush">
-//                       <li className="list-group-item">
-//                         <p class="text-center">
-//                           <img
-//                             src={`https://ipfs.infura.io/ipfs/${image.hash}`}
-//                             style={{ maxWidth: '420px' }}
-//                           />
-//                         </p>
-//                         <p>{image.description}</p>
-//                       </li>
-//                       <li key={key} className="list-group-item py-2">
-//                         <small className="float-left mt-1 text-muted">
-//                           TIPS:{' '}
-//                           {window.web3.utils.fromWei(
-//                             image.tipAmount.toString(),
-//                             'Ether'
-//                           )}{' '}
-//                           ETH
-//                         </small>
-//                         <button
-//                           className="btn btn-link btn-sm float-right pt-0"
-//                           name={image.id}
-//                           onClick={(event) => {
-//                             let tipAmount = window.web3.utils.toWei(
-//                               '0.1',
-//                               'Ether'
-//                             );
-//                             console.log(event.target.name, tipAmount);
-//                             this.props.tipImageOwner(
-//                               event.target.name,
-//                               tipAmount
-//                             );
-//                           }}
-//                         >
-//                           TIP 0.1 ETH
-//                         </button>
-//                       </li>
-//                     </ul>
-//                   </div>
-//                 );
-//               })}
-//             </div>
-//           </main>
-//         </div>
-//       </div>
-//     );
-//   }
-// }
-
-// export default Main;

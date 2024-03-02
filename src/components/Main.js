@@ -24,9 +24,21 @@ const Main = (props) => {
 
   const handleFilter = (e) => {
     e.preventDefault();
-    setFilter(e.target.value);
+    console.log(e.target.value);
     console.log(filter);
-    setFilteredFundRaisings(props.fundings.filter(el=>el.identification.match(filter)));
+    setFilter(e.target.value);
+    setFilteredFundRaisings(
+      e.target.value !== ''
+        ? props.fundings.filter(
+            (el) =>
+              (selectedFundraising &&
+                selectedFundraising === el.identification) ||
+              el.identification
+                .toLowerCase()
+                .match(e.target.value.toLowerCase())
+          )
+        : props.fundings
+    );
   };
 
   const createSubmit = (event) => {
@@ -127,7 +139,7 @@ const Main = (props) => {
               </button>
             </div>
             {/* Search SVG */}
-            <div className="scroll">
+            <div className={filteredFundRaisings.length > 3 ? 'scroll' : ''}>
               <div className="scrollcontent">
                 {showAllFundings
                   ? filteredFundRaisings.map((

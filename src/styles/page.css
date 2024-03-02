@@ -38,8 +38,6 @@ h2 {
     justify-content: space-between;
     overflow-y: scroll;
     max-height: 49vh;
-    scrollbar-color: inherit;
-    scrollbar-face-color: var(--pink);
     width: 26rem;
 }
 

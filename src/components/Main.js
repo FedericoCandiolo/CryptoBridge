@@ -7,17 +7,36 @@ const Main = (props) => {
   const [buffer, setBuffer] = useState(undefined);
   const [file, setFile] = useState("");
   const [identification, setIdentification] = useState("");
+  const [message, setMessage] = useState("");
+  const [amount, setAmount] = useState(0);
   const [filter, setFilter] = useState("");
+  const [filterDonations, setFilterDonations] = useState('');
   const [showAllFundings, setShowAllFundings] = useState(true);
   const [filteredFundRaisings, setFilteredFundRaisings] = useState(
     props.fundings
   )
+  const [filteredDonations, setFilteredDonations] = useState(
+    null
+  )
   const [selectedFundraising, setSelectedFundraising] = useState(undefined);
   const [fundraisingDonations, setFundraisingDonations] = useState([]);
   ;
+  const [unit, setUnit] = useState('ETH');
 
   const handleChange = e => {
     setIdentification(e.target.value);
+    e.preventDefault();
+    console.log(e.target.value);
+  }
+
+  const handleMessage = e => {
+    setMessage(e.target.value);
+    e.preventDefault();
+    console.log(e.target.value);
+  }
+
+  const handleAmount = e => {
+    setAmount(e.target.value);
     e.preventDefault();
     console.log(e.target.value);
   }
@@ -38,6 +57,25 @@ const Main = (props) => {
                 .match(e.target.value.toLowerCase())
           )
         : props.fundings
+    );
+  };
+
+  const handleFilterDonations = (e) => {
+    e.preventDefault();
+    console.log(e.target.value);
+    console.log(filter);
+    setFilterDonations(e.target.value);
+    setFilteredDonations( ////ACA ROMPE
+      filterDonations ? (
+      e.target.value !== ''
+        ? fundraisingDonations.filter( ////COMPLETAR ESTO
+            (el) =>
+              el.message
+                .toLowerCase()
+                .match(e.target.value.toLowerCase())
+          )
+        : fundraisingDonations
+      ) : fundraisingDonations
     );
   };
 
@@ -63,6 +101,22 @@ const Main = (props) => {
       console.log(buffer);
     };
   };
+
+  const toggleFundRaisingMain = (stringid, isOpen) => {
+    console.log('button pressed');
+    if(isOpen) props.actions.close(stringid);
+    else props.actions.open(stringid);
+  };
+
+  const donateMain = () => {
+    console.log("Donation Main Start");
+    props.actions.donate(selectedFundraising, message, amount);
+    console.log("Donation Main End");
+  }
+
+  const weiToNum = (n,u) =>  //It is returned as a string
+    window.web3.utils.fromWei(n.toString(), u === 'ETH' ? 'Ether' : (u === 'gWei' ? 'gwei' : 'wei'));
+  
 
   return (
     <div className="main">
@@ -98,7 +152,7 @@ const Main = (props) => {
                       htmlFor="file"
                       className="searchbutton nomargin block lineheight width30 textcenter"
                     >
-                      Choose image
+                      Search...
                     </label>
                   </div>
                 </div>
@@ -139,7 +193,14 @@ const Main = (props) => {
               </button>
             </div>
             {/* Search SVG */}
-            <div className={filteredFundRaisings.length > 3 ? 'scroll' : ''}>
+            <div
+              className={
+                filteredFundRaisings.filter((e) => showAllFundings || e.isMine)
+                  .length > 3
+                  ? 'scroll'
+                  : ''
+              }
+            >
               <div className="scrollcontent">
                 {showAllFundings
                   ? filteredFundRaisings.map((
@@ -148,18 +209,21 @@ const Main = (props) => {
                       <FundRaising
                         title={p.identification}
                         imgpath={
-                          './imgs/default_donation.jpg'
-                          //'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+                          p.image                          
                         }
-                        totalAmount={p.totalAmount.toNumber()}
+                        totalAmount={weiToNum(p.totalAmount, 'ETH')}
                         totalDonors={p.donorCount.toNumber()}
                         isOpen={p.isOpen}
                         isMine={p.isMine}
+                        toggleFundRaising={() =>
+                          toggleFundRaisingMain(p.identification, p.isOpen)
+                        }
                         isSelected={p.identification === selectedFundraising}
                         withdraw={null}
                         selectFundraising={() => {
                           setSelectedFundraising(p.identification);
                           setFundraisingDonations(p.donations);
+                          setFilteredDonations(p.donations);
                         }}
                       />
                     ))
@@ -172,15 +236,23 @@ const Main = (props) => {
                           title={p.identification}
                           imgpath={
                             './imgs/default_donation.jpg'
-                            //'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'
+                          
                           }
-                          totalAmount={p.totalAmount.toNumber()}
-                          amountToRetrieve={p.amountToRetrieve.toNumber()}
+                          totalAmount={weiToNum(p.totalAmount, 'ETH')}
+                          amountToRetrieve={weiToNum(p.amountToRetrieve, 'ETH')}
                           totalDonors={p.donorCount.toNumber()}
                           isOpen={p.isOpen}
                           isMine={p.isMine}
+                          toggleFundRaising={() =>
+                            toggleFundRaisingMain(p.identification, p.isOpen)
+                          }
                           // donate={() => {}}
+                          isSelected={p.identification === selectedFundraising}
                           withdraw={null}
+                          selectFundraising={() => {
+                            setSelectedFundraising(p.identification);
+                            setFundraisingDonations(p.donations);
+                          }}
                         />
                       ))}
               </div>
@@ -203,22 +275,27 @@ const Main = (props) => {
                       type="number"
                       placeholder="Amount to donate"
                       min={0}
+                      onChange={handleAmount}
                     />
                     {/* Change for options: ETH, gWei and Wei */}
                     <button className="searchbutton nomargin block ">
-                      Search
+                      ETH
                     </button>
                   </div>
                   <input
-                    className="inputbar block width95"
+                    className="inputbar block width95 message"
                     id="message"
                     name="message"
                     type="text"
                     placeholder="Message"
+                    onChange={handleMessage}
                   />
                 </div>
                 <div>
-                  <button className="createbutton nomargin block">
+                  <button
+                    className="createbutton nomargin block"
+                    onClick={donateMain}
+                  >
                     Donate
                   </button>
                 </div>
@@ -235,16 +312,25 @@ const Main = (props) => {
                     className="searchbar"
                     type="text"
                     placeholder="Search donation message"
+                    id="filterDonations"
+                    name="filterDonations"
+                    onChange={handleFilterDonations}
                   />
-                  <i class="fa fa-search"></i>
+                  <i className="fa fa-search"></i>
                 </div>
-                <button className="togglefr nomargin">
-                  View all fund raisings
-                </button>
+                {['ETH', 'gWei', 'Wei'].map((u) => (
+                  <button className={`togglefr nomargin nopaddingsides ${unit === u ? 'thickborder' : ''}`} onClick={() => setUnit(u)}>
+                    {u}
+                  </button>
+                ))}
               </div>
               {/* Search SVG */}
-              {fundraisingDonations.map((d) => (
-                <Donation msg={d.message} amount={d.amount.toNumber()} />
+              {filteredDonations.map((d) => (
+                <Donation
+                  msg={d.message}
+                  amount={weiToNum(d.amount, unit)}
+                  unit={unit}
+                />
               ))}
               {/* <Donation msg={'This is my first donation!'} amount={5} />
               <Donation msg={'This is my second donation!'} amount={2} />

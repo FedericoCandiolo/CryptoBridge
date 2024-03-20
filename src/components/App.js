@@ -129,7 +129,7 @@ class App extends Component {
                             .call();
 
                           let donation = {
-                            amount: donationdata[0],
+                            amount: donationdata[2],
                             message: donationdata[1],
                           };
 
@@ -178,44 +178,116 @@ class App extends Component {
           <>
             <Navbar account={this.state.account} />
             <Main
-              fundings= {this.state.fundings}
+              fundings={this.state.fundings}
               actions={{
                 create: async (stringid, imgbuffer) => {
                   //UPLOAD IMG TO IPFS
-                  let imgpath = "";
-                  try{ 
-                  console.log("IMGBUFFERCREATE")
-                  console.log(imgbuffer);
-                  throw('Get a valid IPFS node.')
-                  let result = await ipfs.add(imgbuffer);
-                  console.log(result);
-                  imgpath = result[0].hash;
+                  let imgpath = '';
+                  try {
+                    console.log('IMGBUFFERCREATE');
+                    console.log(imgbuffer);
+                    throw 'Get a valid IPFS node.';
+                    let result = await ipfs.add(imgbuffer);
+                    console.log(result);
+                    imgpath = result[0].hash;
 
-                  console.log("IMGPATCH before fr")
-                  console.log(imgpath)
-                  }
-                  catch{
-                    console.log("Couldn't upload the image to IPFS.")
+                    console.log('IMGPATCH before fr');
+                    console.log(imgpath);
+                  } catch {
+                    console.log("Couldn't upload the image to IPFS.");
                   }
                   //CREATE FUNDRAISING
                   console.log('A fund raising will be created');
                   // imgpath =
                   //   'https://image.civitai.com/xG1nkqKTMzGDvpLrqFT7WA/250a1948-4148-40f5-98a7-3fced646489c/width=1200/250a1948-4148-40f5-98a7-3fced646489c.jpeg'; ////UNTIL I FIND A FREE ALTERNATIVE FOR INFURA
-                  if(stringid /*&& imgpath*/){
+                  if (stringid /*&& imgpath*/) {
                     const new_funding = await this.state.cryptobridge.methods
-                    .createFundRaising(stringid, imgpath)
-                    .send({ from: this.state.account })
-                    .on('transactionHash', (hash) => {
-                      console.log(`Transaction Hash: ${hash}`);
-                    })
-                    .on('confirmation', (confirmationNumber, receipt) => {
-                      console.log(`Confirmation Number: ${confirmationNumber}`);
-                      console.log(`Receipt:`, receipt);
-                      this.loadBlockchainData();
-                    });
+                      .createFundRaising(stringid, imgpath)
+                      .send({ from: this.state.account })
+                      .on('transactionHash', (hash) => {
+                        console.log(`Transaction Hash: ${hash}`);
+                      })
+                      .on('confirmation', (confirmationNumber, receipt) => {
+                        console.log(
+                          `Confirmation Number: ${confirmationNumber}`
+                        );
+                        console.log(`Receipt:`, receipt);
+                        this.loadBlockchainData();
+                      });
                     console.log('Fund raising created');
-                  }
-                  else console.log('Please complete the fields to create the fund raising.')
+                  } else
+                    console.log(
+                      'Please complete the fields to create the fund raising.'
+                    );
+                },
+                open: async (stringid) => {
+                  //OPEN FUNDRAISING
+                  console.log(`The fund raising "${stringid}" will be opened`);
+                  if (stringid ) {
+                    const fundraising = await this.state.cryptobridge.methods
+                      .openFundRaising(stringid)
+                      .send({ from: this.state.account })
+                      .on('transactionHash', (hash) => {
+                        console.log(`Transaction Hash: ${hash}`);
+                      })
+                      .on('confirmation', (confirmationNumber, receipt) => {
+                        console.log(
+                          `Confirmation Number: ${confirmationNumber}`
+                        );
+                        console.log(`Receipt:`, receipt);
+                        this.loadBlockchainData();
+                      });
+                    console.log('Fund raising opened');
+                  } else
+                    console.log(
+                      'The fund raising is already closed.'
+                    );
+                },
+                close: async (stringid) => {
+                  //OPEN FUNDRAISING
+                  console.log(`The fund raising "${stringid}" will be closed`);
+                  if (stringid ) {
+                    const fundraising = await this.state.cryptobridge.methods
+                      .closeFundRaising(stringid)
+                      .send({ from: this.state.account })
+                      .on('transactionHash', (hash) => {
+                        console.log(`Transaction Hash: ${hash}`);
+                      })
+                      .on('confirmation', (confirmationNumber, receipt) => {
+                        console.log(
+                          `Confirmation Number: ${confirmationNumber}`
+                        );
+                        console.log(`Receipt:`, receipt);
+                        this.loadBlockchainData();
+                      });
+                    console.log('Fund raising closed');
+                  } else
+                    console.log(
+                      'The fund raising is already opened.'
+                    );
+                },
+                donate: async (stringid, message, amount) => {
+                  console.log(stringid)
+                  console.log(amount)
+                  if (stringid && amount > 0) {
+                    const fundraising = await this.state.cryptobridge.methods
+                      .donate(stringid, message)
+                      .send({
+                        from: this.state.account,
+                        value: window.web3.utils.toWei(amount.toString()),
+                      }) //CONVERT ETH TO Wei
+                      .on('transactionHash', (hash) => {
+                        console.log(`Transaction Hash: ${hash}`);
+                      })
+                      .on('confirmation', (confirmationNumber, receipt) => {
+                        console.log(
+                          `Confirmation Number: ${confirmationNumber}`
+                        );
+                        console.log(`Receipt:`, receipt);
+                        this.loadBlockchainData();
+                      });
+                    console.log(`Donated ${amount} to ${stringid}`);
+                  } else console.log('Check the values please.');
                 }
               }}
             />

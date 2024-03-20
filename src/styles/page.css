@@ -26,6 +26,10 @@ h2 {
 
 }
 
+button {
+  cursor: grab !important;
+}
+
 .selected{
     color: var(--cyan) !important;
     border-color: var(--cyan) !important;
@@ -48,6 +52,7 @@ h2 {
 ::-webkit-scrollbar {
     width: 1rem;
     margin-block: 5rem;
+    cursor: grab !important;
 }
 
 ::-webkit-scrollbar-track{
@@ -56,6 +61,8 @@ h2 {
     border-radius: 100vw;
     margin: auto; 
     margin-left: 1rem;
+    cursor: grab !important;
+
     
 }
 
@@ -63,12 +70,15 @@ h2 {
   background: var(--black);
   border: solid 1pt var(--pink);
   border-radius: 100vw;
+
 }
 
 ::-webkit-scrollbar-thumb {
     border: solid 2pt var(--pink) ;
     background: var(--black);
     border-radius: 100vw;
+    cursor: grab !important;
+
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -208,6 +218,10 @@ h2 {
     padding-left: 1rem;
 }
 
+.message {
+    margin-bottom: 0.05rem !important;
+}
+
 .width65 {
     width: 60%;
     padding-left: 1rem;
@@ -220,6 +234,15 @@ h2 {
 .marginright{
 margin-right: 1rem;
 
+}
+
+.thickborder {
+    border-width: 2pt !important;
+}
+
+.nopaddingsides{
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
 }
 
 .width30 {

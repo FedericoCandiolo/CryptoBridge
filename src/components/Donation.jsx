@@ -7,7 +7,7 @@ function Donation(props) {
             <div className="fundraisingbody">
                 <div className="donation">
                     <p className="bigtext">{props.amount}</p>
-                    <p className="large">ETH</p>
+                    <p className="large">{props.unit}</p>
                 </div>
                 <div>
                     <p className="">{props.msg}</p>

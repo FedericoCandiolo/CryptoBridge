@@ -180,7 +180,7 @@ class App extends Component {
             <Navbar 
               account={this.state.account} 
               lightmodestate={this.state.lightmode} 
-              togglelightmode={()=>this.setState = {...this.state, lightmode: !this.state.lightmode}}
+              togglelightmode={()=>this.setState({...this.state, lightmode: !this.state.lightmode})}
             />
             <Main
               fundings={this.state.fundings}

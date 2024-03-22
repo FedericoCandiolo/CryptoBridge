@@ -63,6 +63,11 @@ button {
 
 }
 
+.account{
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
 .selected{
     color: var(--cyan) !important;
     border-color: var(--cyan) !important;
@@ -175,9 +180,12 @@ button {
     padding: 1vh;
     margin-bottom: 1.5rem;
     height: 7vh;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 3fr 1fr 3fr;
+    border-bottom: #fae3d9 solid 1pt;
     border-bottom: var(--pink) solid 1pt;
+
 }
 
 

@@ -4,10 +4,10 @@ function Donation(props) {
     console.log(props)
     return (
         <div className={`fundraising fundraisingbar`}>
-            <div className="fundraisingbody">
+            <div className="donationbody">
                 <div className="donation">
-                    <p className="bigtext">{props.amount}</p>
-                    <p className="large">{props.unit}</p>
+                    <p className="bigtext">{props.amount} {props.unit}</p>
+                    {/* <p className="large">{props.unit}</p> */}
                 </div>
                 <div>
                     <p className="">{props.msg}</p>

@@ -9,6 +9,7 @@ const Main = (props) => {
   const [identification, setIdentification] = useState("");
   const [message, setMessage] = useState("");
   const [amount, setAmount] = useState(0);
+  const [donationUnit,setDonationUnit] = useState('ETH')
   const [filter, setFilter] = useState("");
   const [filterDonations, setFilterDonations] = useState('');
   const [showAllFundings, setShowAllFundings] = useState(true);
@@ -22,6 +23,8 @@ const Main = (props) => {
   const [fundraisingDonations, setFundraisingDonations] = useState([]);
   ;
   const [unit, setUnit] = useState('ETH');
+
+  const unitlist = ['ETH', 'gWei', 'Wei'];
 
   const handleChange = e => {
     setIdentification(e.target.value);
@@ -37,6 +40,12 @@ const Main = (props) => {
 
   const handleAmount = e => {
     setAmount(e.target.value);
+    e.preventDefault();
+    console.log(e.target.value);
+  }
+
+  const handleDonationUnit = e => {
+    setDonationUnit(e.target.value);
     e.preventDefault();
     console.log(e.target.value);
   }
@@ -65,10 +74,10 @@ const Main = (props) => {
     console.log(e.target.value);
     console.log(filter);
     setFilterDonations(e.target.value);
-    setFilteredDonations( ////ACA ROMPE
+    setFilteredDonations( 
       filterDonations ? (
       e.target.value !== ''
-        ? fundraisingDonations.filter( ////COMPLETAR ESTO
+        ? fundraisingDonations.filter( 
             (el) =>
               el.message
                 .toLowerCase()
@@ -85,7 +94,7 @@ const Main = (props) => {
   };
 
   const captureFile = (event) => {
-    //Preprocesa la imagen para upload
+    //Image preprocessed
     event.preventDefault();
     const file = event.target.files[0];
     setFile(file);
@@ -110,7 +119,16 @@ const Main = (props) => {
 
   const donateMain = () => {
     console.log("Donation Main Start");
-    props.actions.donate(selectedFundraising, message, amount);
+    props.actions.donate(
+      selectedFundraising,
+      message,
+      amount,
+      donationUnit === 'ETH'
+        ? 'Ether'
+        : donationUnit === 'gWei'
+        ? 'gwei'
+        : 'wei'
+    );
     console.log("Donation Main End");
   }
 
@@ -126,92 +144,117 @@ const Main = (props) => {
       ></link>
       {/* <div className="half"> */}
       <div className="column-container">
-        <div className="">
-          <div className="frform">
-            <h2 className="fundraisingbar">Create fund raising</h2>
-            <div className="space-between fundraisingbar">
-              <form className="width100" onSubmit={createSubmit}>
-                <input
-                  className="inputbar block width95"
-                  id="identification"
-                  name="identification"
-                  type="text"
-                  placeholder="Identification"
-                  onChange={handleChange}
-                />
-                <div className="space-between width96_5">
-                  <div className="space-between width100">
-                    <input
-                      className="searchbutton nomargin block filebutton lineheight filetext width45 marginright"
-                      id="file"
-                      type="file"
-                      accept=".jpg, .jpeg, .png, .bmp, .gif"
-                      onChange={captureFile}
-                    />
-                    <label
-                      htmlFor="file"
-                      className="searchbutton nomargin block lineheight width30 textcenter"
-                    >
-                      Search...
-                    </label>
-                  </div>
-                </div>
-              </form>
-              <div>
-                <button
-                  onClick={createSubmit}
-                  className="createbutton nomargin block"
-                  // onClick={() => props.actions.create('Test', 'imgpath')}
-                >
-                  Create
-                </button>
+        <div className="frform">
+          <h2 className="fundraisingbar">Create fund raising</h2>
+          <div className="space-between fundraisingbar">
+            <form className="width100" onSubmit={createSubmit}>
+              <input
+                className="inputbar block width95"
+                id="identification"
+                name="identification"
+                type="text"
+                placeholder="Identification"
+                onChange={handleChange}
+              />
+              <div className="space-between width96_5">
+                {/* <div className="space-between width100">
+                  <input
+                    className="searchbutton nomargin block filebutton lineheight filetext width45 marginright"
+                    id="file"
+                    type="file"
+                    accept=".jpg, .jpeg, .png, .bmp, .gif"
+                    onChange={captureFile}
+                  />
+                  <label
+                    htmlFor="file"
+                    className="searchbutton nomargin block lineheight width30 textcenter"
+                  >
+                    Search...
+                  </label>
+                </div> */}
               </div>
-            </div>
-          </div>
-          {/* <div className="fr main_element half"> */}
-          <div className="fr main_element ">
-            <h2 className="fundraisingbar">
-              {showAllFundings ? 'Fund raisings' : 'My fund raisings'}
-            </h2>
-            <div className="fundraisingbar ">
-              <div className="nomargin">
-                <input
-                  className="searchbar"
-                  id="filter"
-                  name="filter"
-                  type="text"
-                  placeholder="Search fund raising"
-                  onChange={handleFilter}
-                />
-                <i className="fa fa-search"></i>
-              </div>
+            </form>
+            <div>
               <button
-                className="togglefr nomargin"
-                onClick={() => setShowAllFundings(!showAllFundings)}
+                onClick={createSubmit}
+                className="createbutton nomargin block"
+                // onClick={() => props.actions.create('Test', 'imgpath')}
               >
-                View {showAllFundings ? 'my' : 'all'} fund raisings
+                Create
               </button>
             </div>
-            {/* Search SVG */}
-            <div
-              className={
-                filteredFundRaisings.filter((e) => showAllFundings || e.isMine)
-                  .length > 3
-                  ? 'scroll'
-                  : ''
-              }
+          </div>
+        </div>
+        {/* <div className="fr main_element half"> */}
+        <div className="fr main_element ">
+          <h2 className="fundraisingbar">
+            {showAllFundings ? 'Fund raisings' : 'My fund raisings'}
+          </h2>
+          <div className="fundraisingbar ">
+            <div className="nomargin">
+              <input
+                className="searchbar"
+                id="filter"
+                name="filter"
+                type="text"
+                placeholder="Search fund raising"
+                onChange={handleFilter}
+              />
+              <i className="fa fa-search"></i>
+            </div>
+            <button
+              className="togglefr nomargin"
+              onClick={() => setShowAllFundings(!showAllFundings)}
             >
-              <div className="scrollcontent">
-                {showAllFundings
-                  ? filteredFundRaisings.map((
+              View {showAllFundings ? 'my' : 'all'} fund raisings
+            </button>
+          </div>
+          <div
+            className={
+              filteredFundRaisings.filter((e) => showAllFundings || e.isMine)
+                .length > 3
+                ? 'scroll'
+                : 'dontscroll'
+            }
+          >
+            <div className="scrollcontent">
+              {showAllFundings
+                ? filteredFundRaisings.map((
+                    p // show all fundraisings
+                  ) => (
+                    <FundRaising
+                      title={p.identification}
+                      imgpath={p.image}
+                      totalAmount={weiToNum(p.totalAmount, 'ETH')}
+                      amountToRetrieve={weiToNum(
+                        p.amountToRetrieve || 0,
+                        'ETH'
+                      )}
+                      totalDonors={p.donorCount.toNumber()}
+                      isOpen={p.isOpen}
+                      isMine={p.isMine}
+                      toggleFundRaising={() =>
+                        toggleFundRaisingMain(p.identification, p.isOpen)
+                      }
+                      isSelected={p.identification === selectedFundraising}
+                      withdraw={() => props.actions.withdraw(p.identification)}
+                      selectFundraising={() => {
+                        setSelectedFundraising(p.identification);
+                        setFundraisingDonations(p.donations);
+                        setFilteredDonations(p.donations);
+                      }}
+                    />
+                  ))
+                : filteredFundRaisings
+                    .filter((e) => e.isMine)
+                    .map((
                       p //only show my fundraisings
                     ) => (
                       <FundRaising
                         title={p.identification}
-                        imgpath={
-                          p.image                          
-                        }
+                        imgpath={p.image}
                         totalAmount={weiToNum(p.totalAmount, 'ETH')}
+                        amountToRetrieve={weiToNum(p.amountToRetrieve, 'ETH')}
                         totalDonors={p.donorCount.toNumber()}
                         isOpen={p.isOpen}
                         isMine={p.isMine}
@@ -219,48 +262,21 @@ const Main = (props) => {
                           toggleFundRaisingMain(p.identification, p.isOpen)
                         }
                         isSelected={p.identification === selectedFundraising}
-                        withdraw={null}
+                        withdraw={() =>
+                          props.actions.withdraw(p.identification)
+                        }
                         selectFundraising={() => {
                           setSelectedFundraising(p.identification);
                           setFundraisingDonations(p.donations);
                           setFilteredDonations(p.donations);
                         }}
                       />
-                    ))
-                  : filteredFundRaisings
-                      .filter((e) => e.isMine)
-                      .map((
-                        p //only show my fundraisings
-                      ) => (
-                        <FundRaising
-                          title={p.identification}
-                          imgpath={
-                            './imgs/default_donation.jpg'
-                          
-                          }
-                          totalAmount={weiToNum(p.totalAmount, 'ETH')}
-                          amountToRetrieve={weiToNum(p.amountToRetrieve, 'ETH')}
-                          totalDonors={p.donorCount.toNumber()}
-                          isOpen={p.isOpen}
-                          isMine={p.isMine}
-                          toggleFundRaising={() =>
-                            toggleFundRaisingMain(p.identification, p.isOpen)
-                          }
-                          // donate={() => {}}
-                          isSelected={p.identification === selectedFundraising}
-                          withdraw={null}
-                          selectFundraising={() => {
-                            setSelectedFundraising(p.identification);
-                            setFundraisingDonations(p.donations);
-                          }}
-                        />
-                      ))}
-              </div>
+                    ))}
             </div>
           </div>
         </div>
         {selectedFundraising ? (
-          <div className="">
+          <>
             <div className="frform">
               <h2 className="fundraisingbar">
                 Donate to "{selectedFundraising}"
@@ -277,10 +293,16 @@ const Main = (props) => {
                       min={0}
                       onChange={handleAmount}
                     />
-                    {/* Change for options: ETH, gWei and Wei */}
-                    <button className="searchbutton nomargin block ">
-                      ETH
-                    </button>
+                    <select
+                      name="donationUnit"
+                      id="donationUnit"
+                      onChange={handleDonationUnit}
+                      className="searchbutton nomargin block"
+                    >
+                      {unitlist.map((u) => (
+                        <option value={u}>{u}</option>
+                      ))}
+                    </select>
                   </div>
                   <input
                     className="inputbar block width95 message"
@@ -318,25 +340,41 @@ const Main = (props) => {
                   />
                   <i className="fa fa-search"></i>
                 </div>
-                {['ETH', 'gWei', 'Wei'].map((u) => (
-                  <button className={`togglefr nomargin nopaddingsides ${unit === u ? 'thickborder' : ''}`} onClick={() => setUnit(u)}>
+                {unitlist.map((u) => (
+                  <button
+                    className={`togglefr nomargin nopaddingsides ${
+                      unit === u ? 'thickborder' : ''
+                    }`}
+                    onClick={() => setUnit(u)}
+                  >
                     {u}
                   </button>
                 ))}
               </div>
               {/* Search SVG */}
-              {filteredDonations.map((d) => (
-                <Donation
-                  msg={d.message}
-                  amount={weiToNum(d.amount, unit)}
-                  unit={unit}
-                />
-              ))}
-              {/* <Donation msg={'This is my first donation!'} amount={5} />
-              <Donation msg={'This is my second donation!'} amount={2} />
-              <Donation msg={'This is my third donation!'} amount={0.5} /> */}
+              <div
+                className={
+                  filteredDonations
+                    .length > 3
+                    ? 'scroll'
+                    : 'dontscroll'
+                }
+              >
+                <div className="scrollcontent">
+                  {filteredDonations.map((d) => (
+                    <Donation
+                      msg={d.message}
+                      amount={weiToNum(d.amount, unit)}
+                      unit={unit}
+                    />
+                  ))}
+                  {/* <Donation msg={'This is my first donation!'} amount={5} />
+                  <Donation msg={'This is my second donation!'} amount={2} />
+                  <Donation msg={'This is my third donation!'} amount={0.5} /> */}
+                </div>
+              </div>
             </div>
-          </div>
+          </>
         ) : (
           <></>
         )}

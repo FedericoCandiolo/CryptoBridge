@@ -7,6 +7,8 @@ function FundRaising(props) {
     console.log(props)
     console.log(`ID: ${(props.title)}`)
     console.log(`HASH: ${(new Hashes.SHA256).hex(props.title)}`)
+    console.log(props)
+    // console.log(`Amount to retrieve: ${window.web3.utils.fromWei(props.amountToRetrieve.toString())}`)
     return (
         <div className={`fundraising fundraisingbar ${props.isSelected ? 'selected' : (props.isOpen ? '' : 'grey')}`}>
             <div className={'fundraisingbody'}>
@@ -29,19 +31,23 @@ function FundRaising(props) {
                     <p><strong>{props.totalDonors}</strong> donations</p>
                     <p><strong>{props.totalAmount} ETH</strong> fund raised</p>
                     {   props.isMine ? (
-                        props.amountToRetrieve ?
+                        props.amountToRetrieve !== '0' ?
                             <p><strong>{props.amountToRetrieve} ETH</strong> for withdrawal</p>
                             : <p className="grey">Nothing to withdraw</p>
                         ) : ''
                     }
                 </div>
             </div>
-            <div>
+            <div className="buttonlist">
                 <button onClick = {props.selectFundraising}>View More</button>
-                <button onClick={props.toggleFundRaising}>{props.isOpen ? 'Close' : 'Open'}</button>
                 {
-                    (props.amountToRetrieve && props.isMine) ?
-                    <button>Withdraw</button>
+                   (props.isMine) ?
+                    <button onClick={props.toggleFundRaising}>{props.isOpen ? 'Close' : 'Open'}</button>
+                    : <></> 
+                }                
+                {
+                    (props.amountToRetrieve !== '0' && props.isMine) ?
+                    <button onClick={props.withdraw}>Withdraw</button>
                     : <></>
                 }
             </div>            

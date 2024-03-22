@@ -8,6 +8,9 @@ class Navbar extends Component {
     return (
       <nav className="navbar">
         <Logo />
+        {/* <button className="searchbutton lightbutton" onClick={this.props.togglelightmode}>
+          {this.props.lightmodestate ? 'Go Dark Mode' : 'Go Light Mode'}
+        </button> */}
         <div>
           <div className="inline">
             <p className="right0_5rem">{this.props.account.toUpperCase()}</p>

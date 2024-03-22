@@ -1,10 +1,11 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
 import Web3 from 'web3';
 import './App.css';
 import CryptoBridge from '../abis/CryptoBridge.json';
 import Loading from './Loading';
 import Navbar from './Navbar'
 import Main from './Main'
+
 
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
@@ -168,7 +169,7 @@ class App extends Component {
 
   render() {
     return (
-      <div>
+      <div className={`fullpage ${this.state.lightmode ? 'lightmode' : ''}`}>
         {this.state.loading ? (
           <div id="loader" className="text-center mt-5">
             <Loading />
@@ -176,7 +177,11 @@ class App extends Component {
           </div>
         ) : (
           <>
-            <Navbar account={this.state.account} />
+            <Navbar 
+              account={this.state.account} 
+              lightmodestate={this.state.lightmode} 
+              togglelightmode={()=>this.setState = {...this.state, lightmode: !this.state.lightmode}}
+            />
             <Main
               fundings={this.state.fundings}
               actions={{
@@ -213,6 +218,7 @@ class App extends Component {
                         );
                         console.log(`Receipt:`, receipt);
                         this.loadBlockchainData();
+                        window.location.reload();
                       });
                     console.log('Fund raising created');
                   } else
@@ -223,7 +229,7 @@ class App extends Component {
                 open: async (stringid) => {
                   //OPEN FUNDRAISING
                   console.log(`The fund raising "${stringid}" will be opened`);
-                  if (stringid ) {
+                  if (stringid) {
                     const fundraising = await this.state.cryptobridge.methods
                       .openFundRaising(stringid)
                       .send({ from: this.state.account })
@@ -236,17 +242,15 @@ class App extends Component {
                         );
                         console.log(`Receipt:`, receipt);
                         this.loadBlockchainData();
+                        window.location.reload();
                       });
                     console.log('Fund raising opened');
-                  } else
-                    console.log(
-                      'The fund raising is already closed.'
-                    );
+                  } else console.log('The fund raising is already closed.');
                 },
                 close: async (stringid) => {
                   //OPEN FUNDRAISING
                   console.log(`The fund raising "${stringid}" will be closed`);
-                  if (stringid ) {
+                  if (stringid) {
                     const fundraising = await this.state.cryptobridge.methods
                       .closeFundRaising(stringid)
                       .send({ from: this.state.account })
@@ -259,22 +263,20 @@ class App extends Component {
                         );
                         console.log(`Receipt:`, receipt);
                         this.loadBlockchainData();
+                        window.location.reload();
                       });
                     console.log('Fund raising closed');
-                  } else
-                    console.log(
-                      'The fund raising is already opened.'
-                    );
+                  } else console.log('The fund raising is already opened.');
                 },
-                donate: async (stringid, message, amount) => {
-                  console.log(stringid)
-                  console.log(amount)
+                donate: async (stringid, message, amount, unit) => {
+                  console.log(stringid);
+                  console.log(amount);
                   if (stringid && amount > 0) {
                     const fundraising = await this.state.cryptobridge.methods
                       .donate(stringid, message)
                       .send({
                         from: this.state.account,
-                        value: window.web3.utils.toWei(amount.toString()),
+                        value: window.web3.utils.toWei(amount.toString(), unit),
                       }) //CONVERT ETH TO Wei
                       .on('transactionHash', (hash) => {
                         console.log(`Transaction Hash: ${hash}`);
@@ -285,10 +287,32 @@ class App extends Component {
                         );
                         console.log(`Receipt:`, receipt);
                         this.loadBlockchainData();
+                        window.location.reload();
                       });
                     console.log(`Donated ${amount} to ${stringid}`);
                   } else console.log('Check the values please.');
-                }
+                },
+                withdraw: async (stringid) => {
+                  //Withdraw funds
+                  console.log(`The funds from "${stringid}" will be withdrawed.`);
+                  if (stringid) {
+                    const fundraising = await this.state.cryptobridge.methods
+                      .withdrawFunds(stringid)
+                      .send({ from: this.state.account })
+                      .on('transactionHash', (hash) => {
+                        console.log(`Transaction Hash: ${hash}`);
+                      })
+                      .on('confirmation', (confirmationNumber, receipt) => {
+                        console.log(
+                          `Confirmation Number: ${confirmationNumber}`
+                        );
+                        console.log(`Receipt:`, receipt);
+                        this.loadBlockchainData();
+                        window.location.reload();
+                      });
+                    console.log('Funds withdrawed');
+                  } else console.log('Funds could not be withdrawed');
+                },
               }}
             />
           </>

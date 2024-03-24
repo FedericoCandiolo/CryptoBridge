@@ -185,22 +185,10 @@ class App extends Component {
             <Main
               fundings={this.state.fundings}
               actions={{
-                create: async (stringid, imgbuffer) => {
+                create: async (stringid) => {
                   //UPLOAD IMG TO IPFS
                   let imgpath = '';
-                  try {
-                    console.log('IMGBUFFERCREATE');
-                    console.log(imgbuffer);
-                    throw 'Get a valid IPFS node.';
-                    let result = await ipfs.add(imgbuffer);
-                    console.log(result);
-                    imgpath = result[0].hash;
-
-                    console.log('IMGPATCH before fr');
-                    console.log(imgpath);
-                  } catch {
-                    console.log("Couldn't upload the image to IPFS.");
-                  }
+                  
                   //CREATE FUNDRAISING
                   console.log('A fund raising will be created');
                   // imgpath =

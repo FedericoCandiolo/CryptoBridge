@@ -1,6 +1,6 @@
 # The project
 
-CryptoBridge is a Dapp that manages fund raisings in blockchain based of the CryptoBridge Smart Contract. One can create a fund raising with an identification and an image and others can donate and leave a message. Later, the owner of the fund raising can withdraw the funds. As well, the fund raising can be opened and closed by the creator as they prefer.
+CryptoBridge is a Dapp that manages fund raisings in blockchain based of the CryptoBridge Smart Contract. One can create a fund raising with an identification and others can donate and leave a message. Later, the owner of the fund raising can withdraw the funds. As well, a fund raising can be opened and closed by its creator when they prefer.
 
 Built in Solidity, this project can be deployed to any EVM Blockchain.
 

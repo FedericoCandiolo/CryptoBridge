@@ -90,7 +90,8 @@ const Main = (props) => {
 
   const createSubmit = (event) => {
     event.preventDefault();
-    if (identification && buffer) props.actions.create(identification, buffer);
+    console.log('create pressed')
+    if (identification ) props.actions.create(identification);
   };
 
   const captureFile = (event) => {

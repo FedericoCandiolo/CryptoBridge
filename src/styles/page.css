@@ -360,6 +360,7 @@ select option{
     flex-flow: row;
     align-items: center;
     margin: inherit !important;
+    margin-left: 0.5rem !important;
 }
 
 .donationbody {

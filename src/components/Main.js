@@ -20,6 +20,7 @@ const Main = (props) => {
     null
   )
   const [selectedFundraising, setSelectedFundraising] = useState(undefined);
+  const [selectedFundraisingInfo, setSelectedFundraisingInfo] = useState(undefined);
   const [fundraisingDonations, setFundraisingDonations] = useState([]);
   ;
   const [unit, setUnit] = useState('ETH');
@@ -241,6 +242,7 @@ const Main = (props) => {
                       withdraw={() => props.actions.withdraw(p.identification)}
                       selectFundraising={() => {
                         setSelectedFundraising(p.identification);
+                        setSelectedFundraisingInfo(p);
                         setFundraisingDonations(p.donations);
                         setFilteredDonations(p.donations);
                       }}
@@ -268,6 +270,7 @@ const Main = (props) => {
                         }
                         selectFundraising={() => {
                           setSelectedFundraising(p.identification);
+                          setSelectedFundraisingInfo(p);
                           setFundraisingDonations(p.donations);
                           setFilteredDonations(p.donations);
                         }}
@@ -278,6 +281,7 @@ const Main = (props) => {
         </div>
         {selectedFundraising ? (
           <>
+            {(selectedFundraisingInfo.isOpen && (!selectedFundraisingInfo.isMine)) ? 
             <div className="frform">
               <h2 className="fundraisingbar">
                 Donate to "{selectedFundraising}"
@@ -324,6 +328,8 @@ const Main = (props) => {
                 </div>
               </div>
             </div>
+            : <div></div>
+                      }
             {/* <div className="fr main_element half"> */}
             <div className="fr main_element ">
               <h2 className="fundraisingbar">
